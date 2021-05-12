@@ -24,7 +24,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./ArmTemplates/container-webapp-template.json
-        parameters: webAppName=akasnikwebapp hostingPlanName=akasnikwebapp-asp appInsightsLocation=westeurope appInsightsName=akasnikwebapp-ai sku=S1 registryName=akasnikwebapp_acr imageName=akasnikwebapp_image registryLocation=westeurope
+        parameters: webAppName=akasnikwebapp hostingPlanName=akasnikwebapp-asp appInsightsLocation=westeurope appInsightsName=akasnikwebapp-ai sku=S1 registryName=akasnikwebappacr imageName=akasnikwebapp_image registryLocation=westeurope
 
       # output containerName variable from template
     - run: echo ${{ steps.deploy.outputs.containerName }}
