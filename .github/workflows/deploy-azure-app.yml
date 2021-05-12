@@ -1,0 +1,30 @@
+on:
+  push:    
+    branches: main
+  workflow_dispatch:
+
+name: Azure ARM
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy ARM template
+    - name: Run ARM deploy
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./ArmTemplates/container-webapp-template.json
+        parameters: webAppName=akasnikwebapp hostingPlanName=akasnikwebapp-asp appInsightsLocation=westeurope appInsightsName=akasnikwebapp-ai sku=S1 registryName=akasnikwebappacr imageName=akasnikwebapp_image registryLocation=westeurope
+
+      # output containerName variable from template
+    - run: echo ${{ steps.deploy.outputs.containerName }}
