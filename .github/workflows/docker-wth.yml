@@ -1,0 +1,56 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - test-deployment-center-linux
+
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    #- name: test
+    #  run: |
+    #    cp -a ./hello-world-net5/. ./
+    #    rm ./hello-world-net5/ -rf
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://akasnikwebappacr1.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername }}
+        password: ${{ secrets.AzureAppService_ContainerPassword }}
+        logout: false
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Application/aspnet-core-dotnet-core/
+        push: true
+        tags: akasnikwebappacr1.azurecr.io/wthack/hello-world-net5/blessed:${{ github.sha }}
+ 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'test-deployment-center-linux'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
+        images: 'akasnikwebappacr1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/netcore/hello-world-net5/blessed:${{ github.sha }}'
