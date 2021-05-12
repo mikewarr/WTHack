@@ -50,7 +50,7 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'test-deployment-center-linux'
-        slot-name: 'production-wth'
+        app-name: 'akasnikwebapp1'
+        slot-name: 'akasnikwebapp1-production-wth'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
         images: 'akasnikwebappacr1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/netcore/hello-world-net5/blessed:${{ github.sha }}'
